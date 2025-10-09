@@ -1,0 +1,74 @@
+-- 🧑‍💼 ADMIN ACCOUNTS TABLE
+CREATE TABLE IF NOT EXISTS admin_accounts (
+    admin_id VARCHAR(20) PRIMARY KEY,  -- Format: ADM001, ADM002
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    mobile_number VARCHAR(15) UNIQUE,
+    password_hash TEXT NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'Admin'
+        CHECK (role IN ('Admin')),
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+------------------------------------------------------------
+
+-- 👷 WORKER ACCOUNTS TABLE
+CREATE TABLE IF NOT EXISTS worker_accounts (
+    worker_id VARCHAR(20) PRIMARY KEY,  -- Format: WOR001, WOR002
+    admin_id VARCHAR(20) NOT NULL REFERENCES admin_accounts(admin_id)
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
+    full_name VARCHAR(100) NOT NULL,
+    mobile_number VARCHAR(15) NOT NULL UNIQUE,
+    joining_date DATE NOT NULL CHECK (joining_date <= CURRENT_DATE),
+    gender VARCHAR(10) CHECK (gender IN ('Male', 'Female', 'Other')),
+    user_name VARCHAR(100) NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+------------------------------------------------------------
+
+-- 🏨 BOOKINGS TABLE
+CREATE TABLE IF NOT EXISTS bookings (
+    booking_id SERIAL PRIMARY KEY,
+    admin_id VARCHAR(20) NOT NULL REFERENCES admin_accounts(admin_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    worker_id VARCHAR(20) NOT NULL REFERENCES worker_accounts(worker_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+
+    -- 👤 Guest Info
+    guest_name VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
+    number_of_persons INT NOT NULL CHECK (number_of_persons BETWEEN 1 AND 50),
+
+    -- 📅 Booking Details
+    booking_type VARCHAR(50) NOT NULL CHECK (booking_type IN ('sleeper','sitting')),
+    total_hours INT NOT NULL CHECK (total_hours BETWEEN 1 AND 24),
+    booking_date DATE NOT NULL CHECK (booking_date >= CURRENT_DATE),
+    in_time TIME NOT NULL,
+    out_time TIME NOT NULL,
+
+    -- 🆔 Proof Details
+    proof_type VARCHAR(50) NOT NULL CHECK (proof_type IN ('aadhar', 'pan id', 'pnr number')),
+    proof_id VARCHAR(50) NOT NULL CHECK (LENGTH(proof_id) >= 5),
+
+    -- 💰 Payment Info
+    price_per_person NUMERIC(10,2) NOT NULL CHECK (price_per_person >= 0),
+    total_amount NUMERIC(12,2) NOT NULL CHECK (total_amount >= 0),
+    paid_amount NUMERIC(12,2) DEFAULT 0 CHECK (paid_amount >= 0 AND paid_amount <= total_amount),
+    balance_amount NUMERIC(12,2) GENERATED ALWAYS AS (total_amount - paid_amount) STORED,
+    payment_method VARCHAR(50) DEFAULT 'cash' CHECK (payment_method IN ('cash', 'card', 'upi')),
+
+    -- 📝 Status and Time
+    booking_status VARCHAR(20) DEFAULT 'active' CHECK (booking_status IN ('active', 'completed')),
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+
+);
+
+select * from admin_accounts;
+select * from worker_accounts;
+select * from bookings;

@@ -1,0 +1,20 @@
+{
+  "name": "railway-backend",
+  "version": "1.0.0",
+  "description": "Backend for Railway project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ratheesh-12/final-railway.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ratheesh-12/final-railway/issues"
+  },
+  "homepage": "https://github.com/ratheesh-12/final-railway#readme"
+}
