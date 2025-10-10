@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS worker_accounts (
 
 -- 🏨 BOOKINGS TABLE
 CREATE TABLE IF NOT EXISTS bookings (
-    booking_id SERIAL PRIMARY KEY,
+    booking_id VARCHAR(50) PRIMARY KEY,
     admin_id VARCHAR(20) NOT NULL REFERENCES admin_accounts(admin_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
     worker_id VARCHAR(20) NOT NULL REFERENCES worker_accounts(worker_id)

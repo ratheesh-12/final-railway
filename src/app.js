@@ -4,7 +4,8 @@ const cors = require("cors");
 
 const adminRoutes = require("./routes/adminRoutes.js");
 const workerRoutes = require("./routes/workerRoutes.js");
-// const bookingsRoutes = require("./routes/bookingsRoutes.js");
+const workerBookingsRoutes = require("./routes/workerBookingsRoutes.js");
+const bookingRoutes = require("./routes/bookingRoutes.js");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.set("trust proxy", 1);
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/worker", workerRoutes);
-// app.use("/api/bookings", bookingsRoutes);
+app.use("/api/bookings", workerBookingsRoutes);
+app.use("/api/analytics", bookingRoutes);
 
 module.exports = app;
